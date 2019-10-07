@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}{{ block.super }} |  {{ discussione.titolo }}{% endblock %}
+
+{% block content %}
+    {% for post in post_discussione %}
+    <div class="card my-3">
+        {% if forloop.first %}
+            <div class="card-header pb-0">
+                <h3>{{ discussione.titolo }}</h3>
+                <p class="text-muted">{{ discussione.data_creazione|date:"D d M Y" }}
+                <br>in: {{ discussione.sezione_appartenenza }}</p>
+            </div>
+        {% else %}
+            <div class="card-header py-0">
+                <p class="text-muted mb-0">
+                    {{ post.data_creazione|date:"d M Y" }}
+                    {% if request.user == post.autore_post %}
+                        <a class="ml-2" href="{% url 'cancella_post' id=discussione.pk pk=post.pk %}">| elimina</a>
+                     {% endif %}   
+                </p>
+            </div>
+        {% endif %}
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-3 col-4">
+                        <p class="mb-0"><a href="{% url 'user_profile' username=post.autore_post %}">{{ post.autore_post }}</a></p>
+                        <p class="text-muted mb-0">Utente dal: {{ post.autore_post.date_joined|date:"M Y" }}</p>
+                        <p class="text-muted">Post: {{ post.autore_post.posts.count }}</p>
+                    </div>
+                    <div class="col-xl-9 col-8">
+                         <p class="my-0">{{ post.contenuto|linebreaks }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    {% if request.user.is_authenticated %}
+        {% include 'forum/form_risposta.html' %}
+    {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            <a href="{% url 'login' %}?next={{ request.get_full_path }}">Accedi</a> per rispondere ad una domanda
+        </div>
+    {% endif %}
+{% endblock content %}

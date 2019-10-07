@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block head_title %}{{ block.super }} | lista utenti{% endblock %}
+{% block content %}
+
+    <h2 class="mt-3 text-warning">Lista Utenti</h2>
+    <hr>
+    {% for utente in object_list %}
+        {% if forloop.first %}<div class="row">{% endif %}
+        <div class="col-lg-4 text-warning">
+            <div class="card my-2 border-warning">
+                <div class="card-body py-2">
+                    <p class="mb-0"><a class="user-link" href="{% url 'user_profile' username=utente.username %}"><strong>@{{ utente.username }}</strong></a></p>
+                    Iscrzione: {{ utente.date_joined|date:"d M Y" }}<br>
+                    Posts: {{ utente.posts.count }}<br>
+                    Discussioni: {{ utente.discussioni.count }}
+                </div>
+            </div>
+        </div>
+
+    {% if forloop.counter|divisibleby:'3' or forloop.last %}</div>{% endif %}
+    {% if forloop.counter|divisibleby:'3' and not forloop.last %}<div class="row">{% endif %}
+    {% endfor %}
+    
+
+{% endblock content %}
